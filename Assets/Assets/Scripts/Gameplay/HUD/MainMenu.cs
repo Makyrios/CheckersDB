@@ -1,10 +1,6 @@
 using GameClasses;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class MainMenu : MonoBehaviour
 {
@@ -26,7 +22,6 @@ public class MainMenu : MonoBehaviour
 
     public void HandleOnAddUserButtonEvent()
     {
-        print(DataBaseInitializer.singleton.userService.DBContext_.Users.Count);
         SceneManager.LoadScene("AddPlayerScene");
     }
 
@@ -37,7 +32,6 @@ public class MainMenu : MonoBehaviour
 
     public void HandleQuitButtonOnEvent()
     {
-        DataBaseInitializer.singleton.userService.WriteToFile();
         Application.Quit();
     }
 

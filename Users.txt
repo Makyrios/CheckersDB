@@ -1,0 +1,12 @@
+BaseGameAccount
+12345
+player1
+StreakGameAccount
+12346
+player2
+StreakGameAccount
+12347
+ps1
+StreakGameAccount
+12348
+ps2

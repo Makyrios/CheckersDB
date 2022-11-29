@@ -1,3 +1,4 @@
+using DB;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,11 @@ public class DataBaseInitializer : MonoBehaviour
     {
         dbcontext = new DBContext();
         userService = new UserService(dbcontext);
+    }
+
+    private void OnApplicationQuit()
+    {
+        userService.WriteToFile();
     }
 
 }

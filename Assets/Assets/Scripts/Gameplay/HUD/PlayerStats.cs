@@ -1,8 +1,5 @@
 using GameClasses;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -38,6 +35,26 @@ public class PlayerStats : MonoBehaviour
         if (player != null)
         {
             SceneManager.LoadScene("ShowPlayerStatsScene");
+        }
+        else
+        {
+            Debug.Log("Couldn't find the player");
+        }
+    }
+
+    public void HandleOnGamesHistoryButtonEvent()
+    {
+        if (int.TryParse(input, out int result))
+        {
+            player = DataBaseInitializer.singleton.userService.GetPlayerByID(result);
+        }
+        else
+        {
+            player = DataBaseInitializer.singleton.userService.GetPlayerByUsername(input);
+        }
+        if (player != null)
+        {
+            SceneManager.LoadScene("GamesHistoryScene");
         }
         else
         {

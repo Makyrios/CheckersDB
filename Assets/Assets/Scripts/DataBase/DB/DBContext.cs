@@ -9,7 +9,7 @@ using Unity.VisualScripting.FullSerializer;
 
 public class DBContext
 {
-    public int GameIDSeed { get; set; } = 123456789;
+    public int GameIDSeed { get; set; } = 1234567;
     public int UserIDSeed { get; set; } = 12345;
 
     public List<BaseGameAccount> Users { get; set; }

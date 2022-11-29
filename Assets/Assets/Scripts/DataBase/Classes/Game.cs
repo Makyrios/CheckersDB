@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameClasses
 {
@@ -41,12 +37,30 @@ namespace GameClasses
             player2 = p2;
             id = gameIDSEED++;
         }
+
+        public Game(int id, BaseGameAccount p1, BaseGameAccount p2)
+        {
+            player1 = p1;
+            player2 = p2;
+            this.id = id;
+        }
     }
 
     // Standart game on certain rating
     class StandardGame : Game
     {
         public StandardGame(int rating, BaseGameAccount p1, BaseGameAccount p2) : base(p1, p2)
+        {
+            if (rating < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(rating), "Rating must be positive value");
+            }
+
+            this.rating = rating;
+            gameType = GameType.StandartGame;
+        }
+
+        public StandardGame(int id, int rating, BaseGameAccount p1, BaseGameAccount p2) : base(id, p1, p2)
         {
             if (rating < 0)
             {
@@ -66,6 +80,12 @@ namespace GameClasses
             rating = 0;
             gameType = GameType.TrainingGame;
         }
+
+        public TrainingGame(int id, BaseGameAccount p1, BaseGameAccount p2) : base(id, p1, p2)
+        {
+            rating = 0;
+            gameType = GameType.TrainingGame;
+        }
     }
 
     // Game on the lowest rating of two players
@@ -76,11 +96,35 @@ namespace GameClasses
             rating = Math.Min(p1.CurrentRating, p2.CurrentRating);
             gameType = GameType.AllInRatingGame;
         }
+
+        public AllInRatingGame(int id, BaseGameAccount p1, BaseGameAccount p2) : base(id, p1, p2)
+        {
+            rating = Math.Min(p1.CurrentRating, p2.CurrentRating);
+            gameType = GameType.AllInRatingGame;
+        }
     }
 
     // Factory class
     public class GameFactory
     {
+        public Game CreateGame(int id, GameType type, BaseGameAccount p1, BaseGameAccount p2, int raiting = 0)
+        {
+            switch (type)
+            {
+                case GameType.StandartGame:
+                    return new StandardGame(id, raiting, p1, p2);
+
+                case GameType.TrainingGame:
+                    return new TrainingGame(id, p1, p2);
+
+                case GameType.AllInRatingGame:
+                    return new AllInRatingGame(id, p1, p2);
+
+                default:
+                    return new TrainingGame(id, p1, p2);
+            }
+        }
+
         public Game CreateGame(GameType type, BaseGameAccount p1, BaseGameAccount p2, int raiting = 0)
         {
             switch (type)

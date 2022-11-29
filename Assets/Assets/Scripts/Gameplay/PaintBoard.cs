@@ -18,10 +18,12 @@ public class PaintBoard : MonoBehaviour
 
     #endregion
 
+    #region StaticVariables
     public static Checker[,] checkersMatrix;
     public static List<Checker> whiteCheckers;
     public static List<Checker> blackCheckers;
     public static List<Square> squares;
+    #endregion
 
     #region SpawnVariables
 
@@ -53,7 +55,6 @@ public class PaintBoard : MonoBehaviour
         spawnPositionEnd = new Vector2(EndPosition.x - squareHalfScale, EndPosition.y + squareHalfScale);
 
         GenerateBoard();
-
     }
 
 

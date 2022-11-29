@@ -13,16 +13,17 @@ public class Checker : MonoBehaviour
 
     public bool isKing = false;
 
-    public ListDictionary possibleSquares;
+    public ListDictionary possibleSquares = new ListDictionary();
     public Square SquareUnderChecker
     {
         get;
         set;
     }
 
-    private void Start()
-    {
-        possibleSquares = new ListDictionary();
-    }
+    //private void Start()
+    //{
+    //    isKing = false;
+    //    possibleSquares = new ListDictionary();
+    //}
 
 }

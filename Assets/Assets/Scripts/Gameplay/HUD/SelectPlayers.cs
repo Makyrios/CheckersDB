@@ -84,10 +84,8 @@ public class SelectPlayers : MonoBehaviour
         BaseGameAccount player2 = null;
         try
         {
-            Debug.Log(p2);
-            Debug.Log(p1);
-            player2 = DataBaseInitializer.singleton.userService.GetPlayerByUsername(p2);
             player1 = DataBaseInitializer.singleton.userService.GetPlayerByUsername(p1);
+            player2 = DataBaseInitializer.singleton.userService.GetPlayerByUsername(p2);
         }
         catch (Exception e)
         {
@@ -100,5 +98,10 @@ public class SelectPlayers : MonoBehaviour
         WhiteCheckersPlayer = player1;
         BlackCheckersPlayer = player2;
         SceneManager.LoadScene("GameScene");
+    }
+
+    public void HandleOnReturnButtonEvent()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 }

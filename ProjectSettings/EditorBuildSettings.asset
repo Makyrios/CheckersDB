@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Assets/Scenes/ShowPlayerStatsScene.unity
     guid: 20d7b8c8610d06b4db9de6c00d126964
   - enabled: 1
+    path: Assets/Assets/Scenes/GamesHistoryScene.unity
+    guid: 90e43f2783d1e914e9184894ba55b63d
+  - enabled: 1
     path: Assets/Assets/Scenes/GameScene.unity
     guid: 4c18648902741f44682142feed70033f
   - enabled: 1

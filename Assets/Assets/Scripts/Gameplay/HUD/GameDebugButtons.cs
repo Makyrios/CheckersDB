@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameDebugButtons : MonoBehaviour
@@ -35,7 +32,6 @@ public class GameDebugButtons : MonoBehaviour
 
     public void HandleOnWhiteWinButtonEvent()
     {
-        print("Check");
         gameOver.HandleOnGameOverEvent(CheckerColor.White);
     }
 

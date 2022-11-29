@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 
 namespace GameClasses
 {
@@ -97,17 +94,17 @@ namespace GameClasses
 
         public virtual string GetStats()
         {
-            Console.WriteLine($"Statistics for {this.GetType().Name}");
+            Console.WriteLine($"Statistics for {Username}");
             var report = new StringBuilder();
 
             int rating = 0;
-            report.AppendLine($"{"GameID",11}{"GameType",20}{"Opponent",15}{"Rating",10}{"Result",10}");
+            report.AppendLine($"{"GameID",10}{"GameType",20}{"Opponent",20}{"Rating",15}{"Result",10}");
             foreach (var item in allGames)
             {
                 rating = ChangeRating(item, rating);
                 var opponent = item.Player1 == this ? item.Player2 : item.Player1;
-                string getResult = item.Player1== this ? "Won" : "Lose";
-                report.AppendLine($"{item.ID,11}{item.GameType,20}{opponent.Username,15}{item.Rating,10}{getResult,10}");
+                string getResult = item.Player1 == this ? "Won" : "Lose";
+                report.AppendLine($"{item.ID,10}{item.GameType,20}{opponent.Username,20}{item.Rating,15}{getResult,10}");
             }
             return report.ToString();
         }
