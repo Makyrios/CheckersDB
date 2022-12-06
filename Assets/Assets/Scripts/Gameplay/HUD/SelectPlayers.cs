@@ -1,7 +1,5 @@
 using GameClasses;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +22,9 @@ public class SelectPlayers : MonoBehaviour
     public static GameType CurrentGameType;
     public static int CurrentRating;
 
+    private Timer timer;
+    private bool displayMessage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +33,9 @@ public class SelectPlayers : MonoBehaviour
         Player2.onValueChanged.AddListener(SetPlayer2);
         GameType.onValueChanged.AddListener(SetGameType);
         ratingObject.onValueChanged.AddListener(SetRating);
+        timer = gameObject.AddComponent<Timer>();
+        timer.Duration = 1;
+        displayMessage = false;
     }
     public void SetPlayer1(string p)
     {
@@ -66,7 +70,7 @@ public class SelectPlayers : MonoBehaviour
                 if (ratingObject != null)
                     Destroy(ratingObject.gameObject);
                 break;
-            
+
         }
     }
 
@@ -93,6 +97,7 @@ public class SelectPlayers : MonoBehaviour
         }
         if (player1 == null || player2 == null)
         {
+            displayMessage = true;
             throw new ArgumentException("One or both players are missing");
         }
         WhiteCheckersPlayer = player1;
@@ -103,5 +108,26 @@ public class SelectPlayers : MonoBehaviour
     public void HandleOnReturnButtonEvent()
     {
         SceneManager.LoadScene("MainMenuScene");
+    }
+
+    private void func(int id)
+    {
+    }
+
+    void OnGUI()
+    {
+        if (displayMessage)
+        {
+            GUI.ModalWindow(1, new Rect(Screen.width / 2 - 100, Screen.height / 2 - 130, 250, 50), func, "One or both players are missing");
+            if (timer.Finished)
+            {
+                displayMessage = false;
+                timer.Stop();
+            }
+            else
+            {
+                timer.Run();
+            }
+        }
     }
 }

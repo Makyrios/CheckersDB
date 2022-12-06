@@ -1,7 +1,6 @@
 using GameClasses;
 using System.Text.RegularExpressions;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -87,19 +86,19 @@ public class AddPlayer : MonoBehaviour
         DataBaseInitializer.singleton.userService.CreateUser(newPlayer);
     }
 
-    void func(int id)
+    private void func(int id)
     {
         if (!isLogged)
         {
             print(message);
         }
-    } 
+    }
 
-    void OnGUI()
+    private void OnGUI()
     {
         if (displayMessage)
         {
-            GUI.ModalWindow(1, new Rect(Screen.width/2 - 100, Screen.height / 2 - 130, 250, 50), func, message);
+            GUI.ModalWindow(1, new Rect(Screen.width / 2 - 100, Screen.height / 2 - 130, 250, 50), func, message);
             isLogged = true;
             if (timer.Finished)
             {
