@@ -14,7 +14,7 @@ public class MainMenu : MonoBehaviour
             Game.gameIDSEED = DataBaseInitializer.singleton.userService.GetGameIDSeed();
         }
     }
-    
+
     public void HandleOnPlayButtonEvent()
     {
         SceneManager.LoadScene("SelectPlayersScene");
@@ -34,29 +34,5 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
     }
-
-
-    //private void OnApplicationQuit()
-    //{
-    //    using (StreamWriter writetext = File.AppendText(DBContext.UserPath))
-    //    {
-    //        foreach (BaseGameAccount account in DataBaseInitializer.userService.SelectAll())
-    //        {
-    //            string type = account.GetType().Name;
-    //            int id = account.ID;
-    //            string username = account.UserName;
-    //            int rating = account.CurrentRating;
-    //            int games = account.GamesCount;
-    //            List<Game> gamesHistory = account.allGames;
-
-    //            writetext.WriteLine(type);
-    //            writetext.WriteLine(id);
-    //            writetext.WriteLine(username);
-    //            writetext.WriteLine(rating);
-    //            writetext.WriteLine(games);
-    //            writetext.WriteLine(gamesHistory);
-    //        }
-    //    }
-    //}
 
 }
