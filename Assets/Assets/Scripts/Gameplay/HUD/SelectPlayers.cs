@@ -102,7 +102,30 @@ public class SelectPlayers : MonoBehaviour
         }
         WhiteCheckersPlayer = player1;
         BlackCheckersPlayer = player2;
+        PlayerPrefs.SetInt("BOT", 0);
         SceneManager.LoadScene("GameScene");
+    }
+
+    public void HandleOnBotButtonClick()
+    {
+        BaseGameAccount player1 = null;
+        try
+        {
+            player1 = DataBaseInitializer.singleton.userService.GetPlayerByUsername(p1);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+        if (player1 == null)
+        {
+            displayMessage = true;
+            throw new ArgumentException("One or both players are missing");
+        }
+        WhiteCheckersPlayer = player1;
+        PlayerPrefs.SetInt("BOT", 1);
+        SceneManager.LoadScene("GameScene");
+
     }
 
     public void HandleOnReturnButtonEvent()

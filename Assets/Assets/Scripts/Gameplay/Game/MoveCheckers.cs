@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -31,9 +29,13 @@ public class MoveCheckers : MonoBehaviour
 
     GameOver gameOver;
 
+    bool isBot;
+
     // Start is called before the first frame update
     void Start()
     {
+        isBot = PlayerPrefs.GetInt("BOT") == 1 ? true : false;
+
         EndTurnButton.SetActive(false);
         isFirstFrame = true;
         isStreak = false;
@@ -51,8 +53,19 @@ public class MoveCheckers : MonoBehaviour
             HightlightPossibleCheckers();
             isFirstFrame = false;
         }
-        TrySelectObject();
-        TryMoveChecker();
+        if (!isBot || isBot && isWhiteTurn)
+        {
+            MouseUpdate();
+        }
+    }
+
+    private void MouseUpdate()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            TrySelectObject();
+            TryMoveChecker(selectedChecker, selectedSquare);
+        }
     }
 
     /// <summary>
@@ -63,69 +76,81 @@ public class MoveCheckers : MonoBehaviour
     /// </summary>
     private void TrySelectObject()
     {
-        // Select checker on click
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-        {
-            UpdateMouseOver();
-            if (mouseOverHit.collider.CompareTag("Checker"))
+        if (!isBot || isBot && isWhiteTurn)
+            // Select checker on click
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                if (possibleCheckers.Count > 0 && possibleCheckers.Contains(mouseOverHit.collider.gameObject.GetComponent<Checker>()) ||
-                    possibleCheckers.Count == 0)
+                UpdateMouseOver();
+                if (mouseOverHit.collider.CompareTag("Checker"))
                 {
-                    ReturnSquaresColor(selectedChecker);
-                    SelectChecker(mouseOverHit);
-                    AddPossibleMoves(selectedChecker);
-                    HighlightPossibleSquares();
+                    if (possibleCheckers.Count > 0 && possibleCheckers.Contains(mouseOverHit.collider.gameObject.GetComponent<Checker>()) ||
+                        possibleCheckers.Count == 0)
+                    {
+                        ReturnSquaresColor(selectedChecker);
+                        SelectChecker(mouseOverHit);
+                        AddPossibleMoves(selectedChecker);
+                        HighlightPossibleSquares(selectedChecker);
+                    }
+                }
+                else if (mouseOverHit.collider.CompareTag("Square"))
+                {
+                    SelectSquare(mouseOverHit);
                 }
             }
-            else if (mouseOverHit.collider.CompareTag("Square"))
-            {
-                SelectSquare(mouseOverHit);
-            }
-        }
     }
 
     /// <summary>
     /// Returns color of highlighted squares, moves the checker if possible,
     /// checks if selectedChecker became a king, keeps a track of streak moves
     /// </summary>
-    private void TryMoveChecker()
+    private void TryMoveChecker(Checker checker, Square square)
     {
         // Move selected checker
-        if (selectedChecker != null)
+        if (isBot && isWhiteTurn || !isBot)
         {
-            if (Input.GetMouseButtonDown(0))
+            UpdateMouseOver();
+            if (!IsInsideBoard(mouseOverHit.point))
+                return;
+
+            if (square == null || checker == null)
+                return;
+
+            if (checker.possibleSquares.ContainsKey(square))
             {
-                UpdateMouseOver();
-                if (!IsInsideBoard(mouseOverHit.point))
-                    return;
+                ReturnSquaresColor(checker);
+                // Returns color of square under selected checker
+                checker.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.black;
 
-                if (selectedSquare == null)
-                    return;
+                // If selected checker jumps over an enemy, then save it
+                Checker checkerToRemove = FindCheckerToRemove(checker, square);
+                MoveChecker(checker, square, checkerToRemove);
 
-                if (selectedChecker.possibleSquares.Contains(selectedSquare))
+                if (CheckIfBecomeKing())
                 {
-                    ReturnSquaresColor(selectedChecker);
-
-                    // If selected checker jumps over an enemy, then save it
-                    Checker checkerToRemove = null;
-                    checkerToRemove = FindCheckerToRemove(checkerToRemove);
-
-                    // Returns color of square under selected checker
-                    selectedChecker.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.black;
-
-                    MoveChecker(selectedChecker, selectedSquare, checkerToRemove);
-
-                    if (CheckIfBecomeKing())
-                    {
-                        EndTurn();
-                        return;
-                    }
-
-                    CheckMultipleTurn(checkerToRemove);
-
+                    EndTurn();
+                    return;
                 }
+
+                CheckMultipleTurn(checkerToRemove);
+
             }
+        }
+        else
+        {
+            if (isWhiteTurn)
+                return;
+
+            // If selected checker jumps over an enemy, then save it
+            Checker checkerToRemove = FindCheckerToRemove(checker, square);
+            MoveChecker(checker, square, checkerToRemove);
+
+            if (CheckIfBecomeKing())
+            {
+                EndTurn();
+                return;
+            }
+
+            CheckMultipleTurn(checkerToRemove);
         }
     }
 
@@ -138,7 +163,7 @@ public class MoveCheckers : MonoBehaviour
             isStreak = true;
             AddPossibleMoves(selectedChecker);
             isStreak = false;
-            foreach (DictionaryEntry de in selectedChecker.possibleSquares)
+            foreach (var de in selectedChecker.possibleSquares)
             {
                 if (de.Value != null)
                 {
@@ -180,17 +205,17 @@ public class MoveCheckers : MonoBehaviour
         return false;
     }
 
-    private Checker FindCheckerToRemove(Checker checkerToRemove)
+    private Checker FindCheckerToRemove(Checker checker, Square square)
     {
-        foreach (DictionaryEntry de in selectedChecker.possibleSquares)
+        foreach (KeyValuePair<Square, Checker> de in checker.possibleSquares)
         {
-            if ((Square)de.Key == selectedSquare && de.Value != null)
+            if (de.Key == square && de.Value != null)
             {
-                checkerToRemove = (Checker)de.Value;
+                return de.Value;
             }
         }
+        return null;
 
-        return checkerToRemove;
     }
 
     /// <summary>
@@ -613,8 +638,8 @@ public class MoveCheckers : MonoBehaviour
             {
                 if (possibleCheckers.Contains(checker))
                 {
-                    ListDictionary temp = new ListDictionary();
-                    foreach (DictionaryEntry de in checker.possibleSquares)
+                    Dictionary<Square, Checker> temp = new Dictionary<Square, Checker>();
+                    foreach (KeyValuePair<Square, Checker> de in checker.possibleSquares)
                     {
                         if (de.Value != null)
                         {
@@ -627,13 +652,79 @@ public class MoveCheckers : MonoBehaviour
         }
     }
 
-    private void HighlightPossibleSquares()
+    /// <summary>
+    /// Return list of all possibles move for current turn
+    /// </summary>
+    /// <returns>List of all possible moves for current turn</returns>
+    private List<Checker> GetAllPossibleCheckers()
     {
-        if (selectedChecker != null)
+        List<Checker> possibleMoves = new List<Checker>();
+
+        // If we can beat enemy, then add only beating moves to the list
+        FindBeatingCheckers();
+        if (possibleCheckers.Count > 0)
         {
-            foreach (DictionaryEntry square in selectedChecker.possibleSquares)
+            foreach (Checker checker in possibleCheckers)
             {
-                var sq = (Square)square.Key;
+                possibleMoves.Add(checker);
+            }
+            return possibleMoves;
+        }
+
+        if (isWhiteTurn)
+        {
+            foreach (Checker checker in PaintBoard.whiteCheckers)
+            {
+                AddPossibleMoves(checker);
+                if (checker.possibleSquares.Count > 0)
+                {
+                    possibleMoves.Add(checker);
+                }
+            }
+        }
+        // Find possible moves for black checkers
+        else
+        {
+            foreach (Checker checker in PaintBoard.blackCheckers)
+            {
+                AddPossibleMoves(checker);
+                if (checker.possibleSquares.Count > 0)
+                {
+                    possibleMoves.Add(checker);
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    /// <summary>
+    /// Return list of all possible moves for all possible checkers
+    /// </summary>
+    /// <returns>All possible moves for current turn</returns>
+    private Dictionary<Checker, Square> GetAllPossibleSquares()
+    {
+        Dictionary<Checker, List<Square>> moves = new Dictionary<Checker, List<Square>>();
+        List<Checker> possibleCheckers = GetAllPossibleCheckers();
+
+        foreach (Checker checker in possibleCheckers)
+        {
+            List<Square> sq = new List<Square>();
+            foreach (KeyValuePair<Square, Checker> move in checker.possibleSquares)
+            {
+                sq.Add(move);
+            }
+        }
+
+        return moves;
+    }
+
+    private void HighlightPossibleSquares(Checker checker)
+    {
+        if (checker != null)
+        {
+            foreach (KeyValuePair<Square, Checker> square in checker.possibleSquares)
+            {
+                var sq = square.Key;
                 var renderer = sq.gameObject.GetComponent<SpriteRenderer>();
                 renderer.color = Color.yellow;
             }
@@ -645,59 +736,19 @@ public class MoveCheckers : MonoBehaviour
     /// </summary>
     private void HightlightPossibleCheckers()
     {
-        if (isWhiteTurn)
+        List<Checker> possibleMoves = GetAllPossibleCheckers();
+        foreach (Checker checker in possibleMoves)
         {
-            // If possibleCheckers has at least 1 element, than only use elements of this list
-            if (possibleCheckers.Count > 0)
-            {
-                foreach (Checker ch in possibleCheckers)
-                {
-                    ch.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                }
-            }
-            else
-            {
-                foreach (Checker ch in PaintBoard.whiteCheckers)
-                {
-                    AddPossibleMoves(ch);
-                    if (ch.possibleSquares.Count > 0)
-                    {
-                        ch.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                    }
-                }
-            }
-        }
-        // If black turn
-        else
-        {
-            // If possibleCheckers has at least 1 element, than only use elements of this list
-            if (possibleCheckers.Count > 0)
-            {
-                foreach (Checker ch in possibleCheckers)
-                {
-                    ch.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                }
-            }
-            else
-            {
-                foreach (Checker ch in PaintBoard.blackCheckers)
-                {
-                    AddPossibleMoves(ch);
-                    if (ch.possibleSquares.Count > 0)
-                    {
-                        ch.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                    }
-                }
-            }
+            checker.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
         }
     }
 
     private void ReturnSquaresColor(Checker checker)
     {
         if (checker == null) return;
-        foreach (DictionaryEntry square in checker.possibleSquares)
+        foreach (KeyValuePair<Square, Checker> square in checker.possibleSquares)
         {
-            var sq = (Square)square.Key;
+            var sq = square.Key;
             var renderer = sq.gameObject.GetComponent<SpriteRenderer>();
             renderer.color = Color.black;
         }
@@ -786,7 +837,7 @@ public class MoveCheckers : MonoBehaviour
             foreach (Checker ch in PaintBoard.whiteCheckers)
             {
                 AddPossibleMoves(ch, true);
-                foreach (DictionaryEntry sq in ch.possibleSquares)
+                foreach (KeyValuePair<Square, Checker> sq in ch.possibleSquares)
                 {
                     // If there at least 1 checker we can beat, then add it to possibleCheckers
                     if (sq.Value != null)
@@ -801,7 +852,7 @@ public class MoveCheckers : MonoBehaviour
             foreach (Checker ch in PaintBoard.blackCheckers)
             {
                 AddPossibleMoves(ch, true);
-                foreach (DictionaryEntry sq in ch.possibleSquares)
+                foreach (KeyValuePair<Square, Checker> sq in ch.possibleSquares)
                 {
                     // If there at least 1 checker we can beat, then add it to possibleCheckers
                     if (sq.Value != null)
@@ -836,8 +887,24 @@ public class MoveCheckers : MonoBehaviour
         selectedSquare = null;
         isWhiteTurn = !isWhiteTurn;
         turnText.ChangeTurn();
-        FindBeatingCheckers();
-        HightlightPossibleCheckers();
+        if (isBot)
+        {
+            if (isWhiteTurn)
+            {
+                FindBeatingCheckers();
+                HightlightPossibleCheckers();
+            }
+            else
+            {
+                // BOT MOVES HERE
+                TryMoveAI();
+            }
+        }
+        else
+        {
+            FindBeatingCheckers();
+            HightlightPossibleCheckers();
+        }
     }
 
     private void CheckVictory()
@@ -851,4 +918,39 @@ public class MoveCheckers : MonoBehaviour
             gameOver.HandleOnGameOverEvent(CheckerColor.White);
         }
     }
+
+
+    private void TryMoveAI()
+    {
+        if (!isWhiteTurn && isBot)
+        {
+            KeyValuePair<Checker, Square> bestMove = FindBestMoveBOT();
+            TryMoveChecker(bestMove.Key, bestMove.Value);
+        }
+    }
+
+    private KeyValuePair<Checker, Square> FindBestMoveBOT()
+    {
+        float bestScore = -Mathf.Infinity;
+        KeyValuePair<Checker, Square> bestMove = new KeyValuePair<Checker, Square>();
+        Dictionary<Checker, Square> possibleMoves = GetAllPossibleSquares();
+        foreach (KeyValuePair<Checker, Square> move in possibleMoves)
+        {
+            float score = minimax();
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestMove = new KeyValuePair<Checker, Square>(move.Key, move.Value);
+            }
+        }
+
+        return bestMove;
+    }
+
+    private float minimax()
+    {
+        return 1;
+    }
+
+
 }
