@@ -1,0 +1,12 @@
+StandartGame
+1234567
+12345
+12346
+3
+False
+StandartGame
+1234568
+12346
+12345
+3
+False

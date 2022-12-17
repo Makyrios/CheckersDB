@@ -10,7 +10,7 @@ public class Checker : MonoBehaviour
 
     public bool isKing = false;
 
-    public Dictionary<Square, Checker> possibleSquares = new Dictionary<Square, Checker>();
+    public List<Square> possibleSquares = new List<Square>();
     public Square SquareUnderChecker
     {
         get;

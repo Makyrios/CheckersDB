@@ -1,3 +1,6 @@
 BaseGameAccount
 12345
 pl1
+BaseGameAccount
+12346
+pl2

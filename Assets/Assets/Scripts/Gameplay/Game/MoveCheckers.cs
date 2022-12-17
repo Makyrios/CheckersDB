@@ -53,18 +53,26 @@ public class MoveCheckers : MonoBehaviour
             HightlightPossibleCheckers();
             isFirstFrame = false;
         }
-        if (!isBot || isBot && isWhiteTurn)
-        {
-            MouseUpdate();
-        }
+        //if (!isBot || isBot && isWhiteTurn)
+        //{
+        //    MouseUpdate();
+        //}
+        TrySelectObject();
+        TryMoveChecker(selectedChecker, selectedSquare);
     }
 
     private void MouseUpdate()
     {
         if (Input.GetMouseButton(0))
         {
-            TrySelectObject();
-            TryMoveChecker(selectedChecker, selectedSquare);
+            if (selectedChecker == null || selectedSquare == null)
+            {
+                TrySelectObject();
+            }
+            else
+            {
+                TryMoveChecker(selectedChecker, selectedSquare);
+            }
         }
     }
 
@@ -76,27 +84,29 @@ public class MoveCheckers : MonoBehaviour
     /// </summary>
     private void TrySelectObject()
     {
-        if (!isBot || isBot && isWhiteTurn)
-            // Select checker on click
-            if (!EventSystem.current.IsPointerOverGameObject())
+        // Select checker on click
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        {
+            UpdateMouseOver();
+            if (mouseOverHit.collider == null)
+                return;
+
+            if (mouseOverHit.collider.CompareTag("Checker"))
             {
-                UpdateMouseOver();
-                if (mouseOverHit.collider.CompareTag("Checker"))
+                if (possibleCheckers.Count > 0 && possibleCheckers.Contains(mouseOverHit.collider.gameObject.GetComponent<Checker>()) ||
+                    possibleCheckers.Count == 0)
                 {
-                    if (possibleCheckers.Count > 0 && possibleCheckers.Contains(mouseOverHit.collider.gameObject.GetComponent<Checker>()) ||
-                        possibleCheckers.Count == 0)
-                    {
-                        ReturnSquaresColor(selectedChecker);
-                        SelectChecker(mouseOverHit);
-                        AddPossibleMoves(selectedChecker);
-                        HighlightPossibleSquares(selectedChecker);
-                    }
-                }
-                else if (mouseOverHit.collider.CompareTag("Square"))
-                {
-                    SelectSquare(mouseOverHit);
+                    ReturnSquaresColor(selectedChecker);
+                    SelectChecker(mouseOverHit);
+                    AddPossibleMoves(selectedChecker);
+                    HighlightPossibleSquares(selectedChecker);
                 }
             }
+            else if (mouseOverHit.collider.CompareTag("Square"))
+            {
+                SelectSquare(mouseOverHit);
+            }
+        }
     }
 
     /// <summary>
@@ -108,31 +118,34 @@ public class MoveCheckers : MonoBehaviour
         // Move selected checker
         if (isBot && isWhiteTurn || !isBot)
         {
-            UpdateMouseOver();
-            if (!IsInsideBoard(mouseOverHit.point))
-                return;
-
-            if (square == null || checker == null)
-                return;
-
-            if (checker.possibleSquares.ContainsKey(square))
+            if (Input.GetMouseButton(0))
             {
-                ReturnSquaresColor(checker);
-                // Returns color of square under selected checker
-                checker.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.black;
-
-                // If selected checker jumps over an enemy, then save it
-                Checker checkerToRemove = FindCheckerToRemove(checker, square);
-                MoveChecker(checker, square, checkerToRemove);
-
-                if (CheckIfBecomeKing())
-                {
-                    EndTurn();
+                UpdateMouseOver();
+                if (!IsInsideBoard(mouseOverHit.point))
                     return;
+
+                if (square == null || checker == null)
+                    return;
+
+                if (checker.possibleSquares.Contains(square))
+                {
+                    ReturnSquaresColor(checker);
+                    // Returns color of square under selected checker
+                    checker.SquareUnderChecker.gameObject.GetComponent<SpriteRenderer>().color = Color.black;
+
+                    // If selected checker jumps over an enemy, then save it
+                    Checker checkerToRemove = FindCheckerToRemove(checker, square);
+                    MoveChecker(checker, square, checkerToRemove);
+
+                    if (CheckIfBecomeKing())
+                    {
+                        EndTurn();
+                        return;
+                    }
+
+                    CheckMultipleTurn(checker, checkerToRemove);
+
                 }
-
-                CheckMultipleTurn(checkerToRemove);
-
             }
         }
         else
@@ -150,25 +163,22 @@ public class MoveCheckers : MonoBehaviour
                 return;
             }
 
-            CheckMultipleTurn(checkerToRemove);
+            CheckMultipleTurn(checker, checkerToRemove);
         }
     }
 
-    private void CheckMultipleTurn(Checker checkerToRemove)
+    private void CheckMultipleTurn(Checker checker, Checker checkerToRemove)
     {
         // If we can destroy enemy in a row do not end turn
         if (checkerToRemove != null)
         {
-            selectedChecker.possibleSquares.Clear();
+            checker.possibleSquares.Clear();
             isStreak = true;
-            AddPossibleMoves(selectedChecker);
+            AddPossibleMoves(checker);
             isStreak = false;
-            foreach (var de in selectedChecker.possibleSquares)
+            if (HasBeatingMove(checker))
             {
-                if (de.Value != null)
-                {
-                    isStreak = true;
-                }
+                isStreak = true;
             }
             if (isStreak)
             {
@@ -207,15 +217,38 @@ public class MoveCheckers : MonoBehaviour
 
     private Checker FindCheckerToRemove(Checker checker, Square square)
     {
-        foreach (KeyValuePair<Square, Checker> de in checker.possibleSquares)
+        if (checker == null || square == null)
         {
-            if (de.Key == square && de.Value != null)
+            return null;
+        }
+        if (!checker.isKing)
+        {
+            if (Mathf.Abs(checker.y - square.y) == 2)
             {
-                return de.Value;
+                if (checker.color == CheckerColor.White)
+                {
+                    return PaintBoard.checkersMatrix[checker.y - 1, (checker.x + square.x) / 2];
+                }
+                else
+                {
+                    return PaintBoard.checkersMatrix[checker.y + 1, (checker.x + square.x) / 2];
+                }
             }
         }
-        return null;
+        else
+        {
+            int i = checker.y;
+            int j = checker.x;
+            // Move along square
+            do
+            {
+                i = (i <= square.y) ? ++i : --i;
+                j = (j <= square.x) ? ++j : --j;
+            } while (PaintBoard.checkersMatrix[i, j] == null && (i != square.y && j != square.x));
 
+            return PaintBoard.checkersMatrix[i, j];
+        }
+        return null;
     }
 
     /// <summary>
@@ -269,8 +302,7 @@ public class MoveCheckers : MonoBehaviour
             PaintBoard.checkersMatrix[checker.y - 1, checker.x - 1].color == CheckerColor.Black &&
             PaintBoard.checkersMatrix[checker.y - 2, checker.x - 2] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 2 && x.x == checker.x - 2),
-                PaintBoard.checkersMatrix[checker.y - 1, checker.x - 1]);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 2 && x.x == checker.x - 2));
         }
     }
 
@@ -282,8 +314,7 @@ public class MoveCheckers : MonoBehaviour
             PaintBoard.checkersMatrix[checker.y - 1, checker.x + 1].color == CheckerColor.Black &&
             PaintBoard.checkersMatrix[checker.y - 2, checker.x + 2] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 2 && x.x == checker.x + 2),
-                PaintBoard.checkersMatrix[checker.y - 1, checker.x + 1]);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 2 && x.x == checker.x + 2));
         }
     }
 
@@ -295,8 +326,7 @@ public class MoveCheckers : MonoBehaviour
             PaintBoard.checkersMatrix[checker.y + 1, checker.x - 1].color == CheckerColor.White &&
             PaintBoard.checkersMatrix[checker.y + 2, checker.x - 2] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 2 && x.x == checker.x - 2),
-                PaintBoard.checkersMatrix[checker.y + 1, checker.x - 1]);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 2 && x.x == checker.x - 2));
         }
     }
 
@@ -308,8 +338,7 @@ public class MoveCheckers : MonoBehaviour
             PaintBoard.checkersMatrix[checker.y + 1, checker.x + 1].color == CheckerColor.White &&
             PaintBoard.checkersMatrix[checker.y + 2, checker.x + 2] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 2 && x.x == checker.x + 2),
-                PaintBoard.checkersMatrix[checker.y + 1, checker.x + 1]);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 2 && x.x == checker.x + 2));
         }
     }
 
@@ -419,7 +448,7 @@ public class MoveCheckers : MonoBehaviour
         if (checker.x < 7 &&
             PaintBoard.checkersMatrix[checker.y + 1, checker.x + 1] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x + 1), null);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x + 1));
         }
     }
 
@@ -429,7 +458,7 @@ public class MoveCheckers : MonoBehaviour
         if (checker.x > 0 &&
         PaintBoard.checkersMatrix[checker.y + 1, checker.x - 1] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x - 1), null);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x - 1));
         }
     }
 
@@ -439,8 +468,7 @@ public class MoveCheckers : MonoBehaviour
         if (checker.x < 7 &&
             PaintBoard.checkersMatrix[checker.y - 1, checker.x + 1] == null)
         {
-            var s = PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x + 1);
-            checker.possibleSquares.Add(s, null);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x + 1));
         }
     }
 
@@ -450,7 +478,7 @@ public class MoveCheckers : MonoBehaviour
         if (checker.x > 0 &&
             PaintBoard.checkersMatrix[checker.y - 1, checker.x - 1] == null)
         {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x - 1), null);
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x - 1));
         }
     }
 
@@ -467,7 +495,6 @@ public class MoveCheckers : MonoBehaviour
         CheckerColor color = checker.color;
         CheckerColor oppositeColor = (color == CheckerColor.White) ? CheckerColor.Black : CheckerColor.White;
         bool isDestroying = false;
-        Checker checkerToDestroy = null;
         // Diagonal left upper move
         int i = checker.y - 1;
         int j = checker.x - 1;
@@ -483,9 +510,9 @@ public class MoveCheckers : MonoBehaviour
             if (PaintBoard.checkersMatrix[i, j] == null)
             {
                 if (isDestroying)
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), checkerToDestroy);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
                 else
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), null);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
             }
             // If we meet enemy checker then mark it and go further
             if (PaintBoard.checkersMatrix[i, j] != null && PaintBoard.checkersMatrix[i, j].color == oppositeColor)
@@ -493,7 +520,6 @@ public class MoveCheckers : MonoBehaviour
                 if (i - 1 >= 0 && j - 1 >= 0 && PaintBoard.checkersMatrix[i - 1, j - 1] == null)
                 {
                     isDestroying = true;
-                    checkerToDestroy = PaintBoard.checkersMatrix[i, j];
                 }
                 else
                     break;
@@ -510,7 +536,6 @@ public class MoveCheckers : MonoBehaviour
 
         // Diagonal right upper move
         isDestroying = false;
-        checkerToDestroy = null;
         i = checker.y - 1;
         j = checker.x + 1;
         while (i >= 0 && j <= 7)
@@ -524,9 +549,9 @@ public class MoveCheckers : MonoBehaviour
             if (PaintBoard.checkersMatrix[i, j] == null)
             {
                 if (isDestroying)
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), checkerToDestroy);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
                 else
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), null);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
             }
             // If we meet enemy checker then mark it and go further
             if (PaintBoard.checkersMatrix[i, j] != null && PaintBoard.checkersMatrix[i, j].color == oppositeColor)
@@ -534,7 +559,6 @@ public class MoveCheckers : MonoBehaviour
                 if (i - 1 >= 0 && j + 1 <= 7 && PaintBoard.checkersMatrix[i - 1, j + 1] == null)
                 {
                     isDestroying = true;
-                    checkerToDestroy = PaintBoard.checkersMatrix[i, j];
                 }
                 else
                     break;
@@ -551,7 +575,6 @@ public class MoveCheckers : MonoBehaviour
 
         // Diagonal left lower move
         isDestroying = false;
-        checkerToDestroy = null;
         i = checker.y + 1;
         j = checker.x - 1;
         while (i <= 7 && j >= 0)
@@ -565,9 +588,9 @@ public class MoveCheckers : MonoBehaviour
             if (PaintBoard.checkersMatrix[i, j] == null)
             {
                 if (isDestroying)
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), checkerToDestroy);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
                 else
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), null);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
             }
             // If we meet enemy checker then mark it and go further
             if (PaintBoard.checkersMatrix[i, j] != null && PaintBoard.checkersMatrix[i, j].color == oppositeColor)
@@ -575,7 +598,6 @@ public class MoveCheckers : MonoBehaviour
                 if (i + 1 <= 7 && j - 1 >= 0 && PaintBoard.checkersMatrix[i + 1, j - 1] == null)
                 {
                     isDestroying = true;
-                    checkerToDestroy = PaintBoard.checkersMatrix[i, j];
                 }
                 else
                     break;
@@ -592,7 +614,6 @@ public class MoveCheckers : MonoBehaviour
 
         // Diagonal right lower move
         isDestroying = false;
-        checkerToDestroy = null;
         i = checker.y + 1;
         j = checker.x + 1;
         while (i <= 7 && j <= 7)
@@ -606,9 +627,9 @@ public class MoveCheckers : MonoBehaviour
             if (PaintBoard.checkersMatrix[i, j] == null)
             {
                 if (isDestroying)
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), checkerToDestroy);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
                 else
-                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j), null);
+                    checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == i && x.x == j));
             }
             // If we meet enemy checker then mark it and go further
             if (PaintBoard.checkersMatrix[i, j] != null && PaintBoard.checkersMatrix[i, j].color == oppositeColor)
@@ -616,7 +637,6 @@ public class MoveCheckers : MonoBehaviour
                 if (i + 1 <= 7 && j + 1 <= 7 && PaintBoard.checkersMatrix[i + 1, j + 1] == null)
                 {
                     isDestroying = true;
-                    checkerToDestroy = PaintBoard.checkersMatrix[i, j];
                 }
                 else
                     break;
@@ -638,15 +658,16 @@ public class MoveCheckers : MonoBehaviour
             {
                 if (possibleCheckers.Contains(checker))
                 {
-                    Dictionary<Square, Checker> temp = new Dictionary<Square, Checker>();
-                    foreach (KeyValuePair<Square, Checker> de in checker.possibleSquares)
+                    List<Square> squares = new List<Square>();
+                    foreach (Square sq in checker.possibleSquares)
                     {
-                        if (de.Value != null)
+                        Checker checkerToRemove = FindCheckerToRemove(checker, sq);
+                        if (checkerToRemove != null)
                         {
-                            temp.Add(de.Key, de.Value);
+                            squares.Add(sq);
                         }
                     }
-                    checker.possibleSquares = temp;
+                    checker.possibleSquares = squares;
                 }
             }
         }
@@ -701,7 +722,7 @@ public class MoveCheckers : MonoBehaviour
     /// Return list of all possible moves for all possible checkers
     /// </summary>
     /// <returns>All possible moves for current turn</returns>
-    private Dictionary<Checker, Square> GetAllPossibleSquares()
+    private Dictionary<Checker, List<Square>> GetAllPossibleSquares()
     {
         Dictionary<Checker, List<Square>> moves = new Dictionary<Checker, List<Square>>();
         List<Checker> possibleCheckers = GetAllPossibleCheckers();
@@ -709,10 +730,11 @@ public class MoveCheckers : MonoBehaviour
         foreach (Checker checker in possibleCheckers)
         {
             List<Square> sq = new List<Square>();
-            foreach (KeyValuePair<Square, Checker> move in checker.possibleSquares)
+            foreach (Square move in checker.possibleSquares)
             {
                 sq.Add(move);
             }
+            moves.Add(checker, sq);
         }
 
         return moves;
@@ -722,9 +744,9 @@ public class MoveCheckers : MonoBehaviour
     {
         if (checker != null)
         {
-            foreach (KeyValuePair<Square, Checker> square in checker.possibleSquares)
+            foreach (Square square in checker.possibleSquares)
             {
-                var sq = square.Key;
+                var sq = square;
                 var renderer = sq.gameObject.GetComponent<SpriteRenderer>();
                 renderer.color = Color.yellow;
             }
@@ -746,9 +768,9 @@ public class MoveCheckers : MonoBehaviour
     private void ReturnSquaresColor(Checker checker)
     {
         if (checker == null) return;
-        foreach (KeyValuePair<Square, Checker> square in checker.possibleSquares)
+        foreach (Square square in checker.possibleSquares)
         {
-            var sq = square.Key;
+            var sq = square;
             var renderer = sq.gameObject.GetComponent<SpriteRenderer>();
             renderer.color = Color.black;
         }
@@ -837,13 +859,9 @@ public class MoveCheckers : MonoBehaviour
             foreach (Checker ch in PaintBoard.whiteCheckers)
             {
                 AddPossibleMoves(ch, true);
-                foreach (KeyValuePair<Square, Checker> sq in ch.possibleSquares)
+                if (HasBeatingMove(ch))
                 {
-                    // If there at least 1 checker we can beat, then add it to possibleCheckers
-                    if (sq.Value != null)
-                    {
-                        possibleCheckers.Add(ch);
-                    }
+                    possibleCheckers.Add(ch);
                 }
             }
         }
@@ -852,16 +870,26 @@ public class MoveCheckers : MonoBehaviour
             foreach (Checker ch in PaintBoard.blackCheckers)
             {
                 AddPossibleMoves(ch, true);
-                foreach (KeyValuePair<Square, Checker> sq in ch.possibleSquares)
+                if (HasBeatingMove(ch))
                 {
-                    // If there at least 1 checker we can beat, then add it to possibleCheckers
-                    if (sq.Value != null)
-                    {
-                        possibleCheckers.Add(ch);
-                    }
+                    possibleCheckers.Add(ch);
                 }
             }
         }
+    }
+
+    private bool HasBeatingMove(Checker ch)
+    {
+        foreach (Square sq in ch.possibleSquares)
+        {
+            Checker checkerToBeat = FindCheckerToRemove(ch, sq);
+            if (checkerToBeat != null)
+            {
+                // If there at least 1 checker we can beat, then add it to list
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>
@@ -874,6 +902,7 @@ public class MoveCheckers : MonoBehaviour
         selectedChecker = null;
         selectedSquare = null;
         FindBeatingCheckers();
+        ReturnCheckersColor();
         HightlightPossibleCheckers();
     }
 
@@ -897,12 +926,12 @@ public class MoveCheckers : MonoBehaviour
             else
             {
                 // BOT MOVES HERE
-                TryMoveAI();
+                //TryMoveAI();
             }
         }
         else
         {
-            FindBeatingCheckers();
+            //FindBeatingCheckers();
             HightlightPossibleCheckers();
         }
     }
@@ -933,16 +962,16 @@ public class MoveCheckers : MonoBehaviour
     {
         float bestScore = -Mathf.Infinity;
         KeyValuePair<Checker, Square> bestMove = new KeyValuePair<Checker, Square>();
-        Dictionary<Checker, Square> possibleMoves = GetAllPossibleSquares();
-        foreach (KeyValuePair<Checker, Square> move in possibleMoves)
-        {
-            float score = minimax();
-            if (score > bestScore)
-            {
-                bestScore = score;
-                bestMove = new KeyValuePair<Checker, Square>(move.Key, move.Value);
-            }
-        }
+        Dictionary<Checker, List<Square>> possibleMoves = GetAllPossibleSquares();
+        //foreach (KeyValuePair<Checker, Square> move in possibleMoves)
+        //{
+        //    float score = minimax();
+        //    if (score > bestScore)
+        //    {
+        //        bestScore = score;
+        //        bestMove = new KeyValuePair<Checker, Square>(move.Key, move.Value);
+        //    }
+        //}
 
         return bestMove;
     }
