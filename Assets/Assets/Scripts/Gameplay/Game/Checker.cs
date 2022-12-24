@@ -1,7 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Checker : MonoBehaviour
@@ -13,17 +10,11 @@ public class Checker : MonoBehaviour
 
     public bool isKing = false;
 
-    public ListDictionary possibleSquares = new ListDictionary();
+    public List<Square> possibleSquares = new List<Square>();
     public Square SquareUnderChecker
     {
         get;
         set;
     }
-
-    //private void Start()
-    //{
-    //    isKing = false;
-    //    possibleSquares = new ListDictionary();
-    //}
 
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PaintBoard : MonoBehaviour
@@ -19,10 +17,7 @@ public class PaintBoard : MonoBehaviour
     #endregion
 
     #region StaticVariables
-    public static Checker[,] checkersMatrix;
-    public static List<Checker> whiteCheckers;
-    public static List<Checker> blackCheckers;
-    public static List<Square> squares;
+    public static Board currentBoard;
     #endregion
 
     #region SpawnVariables
@@ -39,15 +34,12 @@ public class PaintBoard : MonoBehaviour
 
     #endregion
 
-    
+
 
     // Start is called before the first frame update
     void Start()
     {
-        checkersMatrix = new Checker[8, 8];
-        whiteCheckers = new List<Checker>();
-        blackCheckers = new List<Checker>();
-        squares = new List<Square>();
+        currentBoard = new Board();
 
         gameBoard = GameObject.FindGameObjectWithTag("GameBoard");
         squareHalfScale = prefabBlackSquare.transform.localScale.x / 2;
@@ -80,7 +72,7 @@ public class PaintBoard : MonoBehaviour
                 currentSquare.transform.SetParent(gameBoard.transform, true);
                 currentSquare.GetComponent<Square>().x = x;
                 currentSquare.GetComponent<Square>().y = y;
-                squares.Add(currentSquare.GetComponent<Square>());
+                currentBoard.squares.Add(currentSquare.GetComponent<Square>());
 
                 // Spawn checkers
                 if (!isWhiteSquare)
@@ -88,24 +80,24 @@ public class PaintBoard : MonoBehaviour
                     if (y <= 2)
                     {
                         var currentChecker = SpawnChecker(prefabBlackChecker, spawnPosition);
-                        checkersMatrix[y, x] = currentChecker.GetComponent<Checker>();
+                        currentBoard.checkers[y, x] = currentChecker.GetComponent<Checker>();
                         currentChecker.GetComponent<Checker>().x = x;
                         currentChecker.GetComponent<Checker>().y = y;
                         currentChecker.GetComponent<Checker>().color = CheckerColor.Black;
                         currentChecker.GetComponent<Checker>().SquareUnderChecker = currentSquare.GetComponent<Square>();
 
-                        blackCheckers.Add(currentChecker.GetComponent<Checker>());
+                        currentBoard.blackCheckers.Add(currentChecker.GetComponent<Checker>());
                     }
                     else if (y >= 5)
                     {
                         var currentChecker = SpawnChecker(prefabWhiteChecker, spawnPosition);
-                        checkersMatrix[y, x] = currentChecker.GetComponent<Checker>();
+                        currentBoard.checkers[y, x] = currentChecker.GetComponent<Checker>();
                         currentChecker.GetComponent<Checker>().x = x;
                         currentChecker.GetComponent<Checker>().y = y;
                         currentChecker.GetComponent<Checker>().color = CheckerColor.White;
 
                         currentChecker.GetComponent<Checker>().SquareUnderChecker = currentSquare.GetComponent<Square>();
-                        whiteCheckers.Add(currentChecker.GetComponent<Checker>());
+                        currentBoard.whiteCheckers.Add(currentChecker.GetComponent<Checker>());
                     }
                 }
 
