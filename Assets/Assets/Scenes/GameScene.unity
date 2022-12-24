@@ -364,7 +364,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 2119417425}
-  isWhiteTurn: 0
 --- !u!114 &492202712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -527,7 +526,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WhiteWinButton: {fileID: 1806514594}
   BlackWinButton: {fileID: 1107612508}
-  isDebug: 1
+  isDebug: 0
 --- !u!1 &1107612508 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7119134098274035868, guid: 986a436ab3e26ef429ef9c87035287a0, type: 3}
