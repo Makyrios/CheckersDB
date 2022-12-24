@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
-
 public class MoveCheckers : MonoBehaviour
 {
     #region Objects
@@ -47,10 +43,7 @@ public class MoveCheckers : MonoBehaviour
             HightlightPossibleCheckers(currentBoard);
             isFirstFrame = false;
         }
-        //if (!isBot || isBot && isWhiteTurn)
-        //{
-        //    MouseUpdate();
-        //}
+
         TrySelectObject();
         TryMoveChecker(selectedChecker, selectedSquare);
     }
@@ -151,9 +144,9 @@ public class MoveCheckers : MonoBehaviour
             board.isStreak = false;
             if (HasBeatingMove(board, checker))
             {
-                board.isStreak = true;
+                isStreak = true;
             }
-            if (board.isStreak)
+            if (isStreak)
             {
                 EndMove();
             }
@@ -455,7 +448,45 @@ public class MoveCheckers : MonoBehaviour
         #endregion
     }
 
+    private static void MoveLowerRight(Checker checker)
+    {
+        // Move lower right
+        if (checker.x < 7 &&
+            PaintBoard.checkersMatrix[checker.y + 1, checker.x + 1] == null)
+        {
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x + 1));
+        }
+    }
 
+    private static void MoveLowerLeft(Checker checker)
+    {
+        // Move lower left
+        if (checker.x > 0 &&
+        PaintBoard.checkersMatrix[checker.y + 1, checker.x - 1] == null)
+        {
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x - 1));
+        }
+    }
+
+    private static void MoveUpperRight(Checker checker)
+    {
+        // Move upper right
+        if (checker.x < 7 &&
+            PaintBoard.checkersMatrix[checker.y - 1, checker.x + 1] == null)
+        {
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x + 1));
+        }
+    }
+
+    private static void MoveUpperLeft(Checker checker)
+    {
+        // Move upper left
+        if (checker.x > 0 &&
+            PaintBoard.checkersMatrix[checker.y - 1, checker.x - 1] == null)
+        {
+            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x - 1));
+        }
+    }
 
     /// <summary>
     /// King moves at all diagonal directions without restrictions
@@ -689,6 +720,8 @@ public class MoveCheckers : MonoBehaviour
             }
         }
         return possibleMoves;
+
+
     }
 
     private void HighlightPossibleSquares(Checker checker)
