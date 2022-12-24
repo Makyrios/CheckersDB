@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
 public class MoveCheckers : MonoBehaviour
 {
     #region Objects
@@ -144,9 +148,9 @@ public class MoveCheckers : MonoBehaviour
             board.isStreak = false;
             if (HasBeatingMove(board, checker))
             {
-                isStreak = true;
+                board.isStreak = true;
             }
-            if (isStreak)
+            if (board.isStreak)
             {
                 EndMove();
             }
@@ -446,46 +450,6 @@ public class MoveCheckers : MonoBehaviour
             AddKingPossibleMoves(board, checker);
         }
         #endregion
-    }
-
-    private static void MoveLowerRight(Checker checker)
-    {
-        // Move lower right
-        if (checker.x < 7 &&
-            PaintBoard.checkersMatrix[checker.y + 1, checker.x + 1] == null)
-        {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x + 1));
-        }
-    }
-
-    private static void MoveLowerLeft(Checker checker)
-    {
-        // Move lower left
-        if (checker.x > 0 &&
-        PaintBoard.checkersMatrix[checker.y + 1, checker.x - 1] == null)
-        {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y + 1 && x.x == checker.x - 1));
-        }
-    }
-
-    private static void MoveUpperRight(Checker checker)
-    {
-        // Move upper right
-        if (checker.x < 7 &&
-            PaintBoard.checkersMatrix[checker.y - 1, checker.x + 1] == null)
-        {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x + 1));
-        }
-    }
-
-    private static void MoveUpperLeft(Checker checker)
-    {
-        // Move upper left
-        if (checker.x > 0 &&
-            PaintBoard.checkersMatrix[checker.y - 1, checker.x - 1] == null)
-        {
-            checker.possibleSquares.Add(PaintBoard.squares.Find(x => x.y == checker.y - 1 && x.x == checker.x - 1));
-        }
     }
 
     /// <summary>
