@@ -52,21 +52,6 @@ public class MoveCheckers : MonoBehaviour
         TryMoveChecker(selectedChecker, selectedSquare);
     }
 
-    private void MouseUpdate()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            if (selectedChecker == null || selectedSquare == null)
-            {
-                TrySelectObject();
-            }
-            else
-            {
-                TryMoveChecker(selectedChecker, selectedSquare);
-            }
-        }
-    }
-
     /// <summary>
     /// Trying to:
     /// -Select checker piece if not selected
