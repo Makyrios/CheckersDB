@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class Board
 {
@@ -19,12 +20,12 @@ public class Board
         possibleCheckers = new List<Checker>();
         isStreak = false;
     }
-    public Board(Checker[,] board, List<Checker> white, List<Checker> black, List<Square> squares)
+    public Board(Checker[,] board, List<Checker> white, List<Checker> black, List<Square> moves)
     {
-        checkers = board;
-        whiteCheckers = white;
-        blackCheckers = black;
-        this.squares = squares;
+        checkers = board.Clone() as Checker[,];
+        whiteCheckers = white.Select(s => new Checker(s)).ToList();
+        blackCheckers = black.Select(s => new Checker(s)).ToList();
+        squares = moves.Select(s => new Square(s)).ToList();
         possibleCheckers = new List<Checker>();
     }
 

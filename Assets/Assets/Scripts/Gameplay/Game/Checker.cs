@@ -17,10 +17,12 @@ public class Checker : MonoBehaviour
         set;
     }
 
-    //private void Start()
-    //{
-    //    isKing = false;
-    //    possibleSquares = new ListDictionary();
-    //}
+    public Checker(Checker ch)
+    {
+        this.x = ch.x;
+        this.y = ch.y;
+        this.color = ch.color;
+        this.isKing = ch.isKing;
+    }
 
 }

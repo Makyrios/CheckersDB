@@ -37,7 +37,7 @@ public class MoveCheckers : MonoBehaviour
     void Start()
     {
         currentBoard = PaintBoard.currentBoard;
-        isBot = false;
+        isBot = PlayerPrefs.GetInt("BOT") == 1 ? true : false;
 
         EndTurnButton.SetActive(false);
         isFirstFrame = true;
@@ -887,7 +887,22 @@ public class MoveCheckers : MonoBehaviour
         selectedSquare = null;
         isWhiteTurn = !isWhiteTurn;
         turnText.ChangeTurn();
-        HightlightPossibleCheckers(currentBoard);
+        if (isBot)
+        {
+            if (isWhiteTurn)
+            {
+                HightlightPossibleCheckers(currentBoard);
+            }
+            else
+            {
+                // BOT MOVES HERE
+                TryMoveAI();
+            }
+        }
+        else
+        {
+            HightlightPossibleCheckers(currentBoard);
+        }
 
     }
 
