@@ -1,9 +1,9 @@
+using System;
 using System.Linq;
 using System.Text;
-using System;
 
 namespace GameClasses
-{   
+{
     // Account gets additional points for win streak
     public class StreakGameAccount : BaseGameAccount
     {
@@ -12,8 +12,9 @@ namespace GameClasses
         // Bonus points for streak
         private const int BonusPoints = 50;
 
-        public StreakGameAccount(string username) : base(username) { }
-        public StreakGameAccount(int id, string username) : base(id, username) { }
+        public StreakGameAccount() { }
+        public StreakGameAccount(string username) : base(username) { type = GameAccount.Streak; }
+        public StreakGameAccount(int id, string username) : base(id, username) { type = GameAccount.Streak; }
 
         private bool CheckWinStreak(Game game)
         {
@@ -29,12 +30,12 @@ namespace GameClasses
                     if (currentGame.GameType == GameType.TrainingGame)
                         continue;
                     // If current game is won for player than add streak
-                    if (currentGame.Player1 == this)
+                    if (DataBaseInitializer.singleton.userService.GetPlayerByUsername(currentGame.Player1) == this)
                     {
                         currentStreak++;
                     }
                     // Check while current game is not lost or while current streak < StreakCount
-                    if (currentGame.Player1 != this || currentStreak >= StreakCount)
+                    if (DataBaseInitializer.singleton.userService.GetPlayerByUsername(currentGame.Player1) != this || currentStreak >= StreakCount)
                     {
                         if (currentStreak >= StreakCount)
                         {
@@ -62,6 +63,7 @@ namespace GameClasses
                     if (rating < 1)
                         rating = 1;
                 }
+                currentRating = rating;
                 return rating;
             }
         }
@@ -89,10 +91,10 @@ namespace GameClasses
             foreach (var item in allGames)
             {
                 rating = ChangeRating(item, rating);
-                var opponent = item.Player1 == this ? item.Player2 : item.Player1;
-                string getResult = item.Player1 == this ? "Won" : "Lose";
-                string bonusPointLine = item.IsStreak && item.Player1 == this ? "+" + BonusPoints.ToString() : "";
-                report.AppendLine($"{item.ID,11}{item.GameType,20}{opponent.Username,15}{item.Rating + bonusPointLine,14}{getResult,15}");
+                string opponent = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? item.Player2 : item.Player1;
+                string getResult = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? "Won" : "Lose";
+                string bonusPointLine = (item.IsStreak && DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? "+" + BonusPoints.ToString() : "";
+                report.AppendLine($"{item.ID,11}{item.GameType,20}{opponent,15}{item.Rating + bonusPointLine,14}{getResult,15}");
             }
             return report.ToString();
         }

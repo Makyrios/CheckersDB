@@ -1,7 +1,5 @@
 using GameClasses;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DB
 {
@@ -12,7 +10,7 @@ namespace DB
         public List<BaseGameAccount> SelectAllUsers();
         public List<Game> SelectAllGames();
         public List<int> GetIds();
-        public void WriteToDB();
+        public void ReadToDB();
         public void WriteToFile();
     }
 }

@@ -1,10 +1,14 @@
+using System;
+
 namespace GameClasses
 {
     // For won games get 2x points, for lost games lose 0.5x points
+    [Serializable]
     public class BonusGameAccount : BaseGameAccount
     {
-        public BonusGameAccount(string username) : base(username) { }
-        public BonusGameAccount(int id, string username) : base(id, username) { }
+        public BonusGameAccount() { }
+        public BonusGameAccount(string username) : base(username) { type = GameAccount.Bonus; }
+        public BonusGameAccount(int id, string username) : base(id, username) { type = GameAccount.Bonus; }
 
 
         public override int CurrentRating
@@ -27,7 +31,7 @@ namespace GameClasses
                         rating = 1;
                 }
 
-
+                currentRating = rating;
                 return rating;
             }
         }

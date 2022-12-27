@@ -1,13 +1,15 @@
 using DB;
-using System.Collections;
-using System.Collections.Generic;
+using GameClasses;
+using System.Linq;
 using UnityEngine;
 
 public class DataBaseInitializer : MonoBehaviour
 {
     public static DataBaseInitializer singleton { get; private set; }
     private DBContext dbcontext;
+
     public UserService userService { get; private set; }
+    public BaseGameAccount CurrentPlayer { get; set; }
 
 
     private void Awake()
@@ -32,6 +34,14 @@ public class DataBaseInitializer : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        if (userService.DBContext_.Users.Any())
+        {
+            userService.DBContext_.UserIDSeed = userService.DBContext_.Users.Last().ID + 1;
+        }
+        if (userService.DBContext_.GamesHistory.Any())
+        {
+            userService.DBContext_.GameIDSeed = userService.DBContext_.GamesHistory.Last().ID + 1;
+        }
         userService.WriteToFile();
     }
 

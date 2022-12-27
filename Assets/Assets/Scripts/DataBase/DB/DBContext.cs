@@ -1,11 +1,5 @@
-using DB;
 using GameClasses;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting.FullSerializer;
 
 public class DBContext
 {
@@ -19,6 +13,5 @@ public class DBContext
     {
         Users = new List<BaseGameAccount>();
         GamesHistory = new List<Game>();
-
     }
 }

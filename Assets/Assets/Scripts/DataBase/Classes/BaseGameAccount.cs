@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,14 +15,18 @@ namespace GameClasses
     public class BaseGameAccount
     {
         public static int IDSeed;
-        protected int id;
+        protected GameAccount type;
+        public int id;
+        public string Username;
+        protected int currentRating;
+        protected int gamesCount;
 
+        [JsonIgnore]
         public int ID { get { return id; } }
-        public string Username { get; set; }
 
-        public List<Game> allGames = new List<Game>();
+        public List<Game> allGames;
 
-        GameFactory gf = new GameFactory();
+        private GameFactory gf = new GameFactory();
 
         public virtual int CurrentRating
         {
@@ -35,7 +40,7 @@ namespace GameClasses
                         rating = 1;
                 }
 
-
+                currentRating = rating;
                 return rating;
             }
         }
@@ -44,31 +49,38 @@ namespace GameClasses
             get
             {
                 int count = 0;
-                foreach(var item in allGames)
+                foreach (var item in allGames)
                 {
                     count++;
                 }
+
+                gamesCount = count;
                 return count;
             }
         }
 
+        public BaseGameAccount() { }
 
         public BaseGameAccount(string userName)
         {
+            allGames = new List<Game>();
+            type = GameAccount.Standart;
             Username = userName;
             id = IDSeed++;
         }
 
         public BaseGameAccount(int id, string username)
         {
-            this.id = id;
+            allGames = new List<Game>();
+            type = GameAccount.Standart;
             Username = username;
+            this.id = id;
         }
 
 
         protected int ChangeRating(Game game, int rating)
         {
-            if (game.Player1 == this)
+            if (DataBaseInitializer.singleton.userService.GetPlayerByUsername(game.Player1) == this)
             {
                 rating += game.Rating;
             }
@@ -102,13 +114,13 @@ namespace GameClasses
             foreach (var item in allGames)
             {
                 rating = ChangeRating(item, rating);
-                var opponent = item.Player1 == this ? item.Player2 : item.Player1;
-                string getResult = item.Player1 == this ? "Won" : "Lose";
-                report.AppendLine($"{item.ID,10}{item.GameType,20}{opponent.Username,20}{item.Rating,15}{getResult,10}");
+                var opponent = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? item.Player2 : item.Player1;
+                string getResult = DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this ? "Won" : "Lose";
+                report.AppendLine($"{item.ID,10}{item.GameType,20}{opponent,20}{item.Rating,15}{getResult,10}");
             }
             return report.ToString();
         }
     }
 
-    
+
 }
