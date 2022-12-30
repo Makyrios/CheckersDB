@@ -9,7 +9,7 @@ namespace DB
     public class UserService : IUserService
     {
         private static string DataPath = "Data.json";
-        private GameFactory gf = new GameFactory();
+        private GameCreator gc;
 
         public DBContext DBContext_;
         public UserService(DBContext dBContext)

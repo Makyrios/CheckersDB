@@ -349,8 +349,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabWhiteSquare: {fileID: 5011710630724027066, guid: 6c831d5b2002c6844a0f19b821168663, type: 3}
   prefabBlackSquare: {fileID: 5011710630724027066, guid: eea522d68cc3e7c44a0d205ff8d89953, type: 3}
-  prefabWhiteChecker: {fileID: 4488988257509111287, guid: aca82894691dca64a8abedb8d5d87e2c, type: 3}
-  prefabBlackChecker: {fileID: 9116841420098408075, guid: 3c2da2bc28631a84ea0a0443ffe3d60a, type: 3}
+  prefabWhiteChecker: {fileID: 4488988257509111287, guid: 58ab975ebd4427d4ea8ff39e87c51fea, type: 3}
+  prefabBlackChecker: {fileID: 9116841420098408075, guid: e3f3d33aab2e346419362c77ea20b91a, type: 3}
 --- !u!114 &492202711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +364,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 2119417425}
-  isWhiteTurn: 0
 --- !u!114 &492202712
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -61,14 +61,12 @@ public class Login : MonoBehaviour
 
     public void HandleOnLoginClickEvent()
     {
-        foreach (var user in DataBaseInitializer.singleton.userService.SelectAllUsers())
+        var existingUser = DataBaseInitializer.singleton.userService.SelectAllUsers().Find(x => x.Username == username);
+        if (existingUser != null)
         {
-            if (user.Username == username)
-            {
-                DataBaseInitializer.singleton.CurrentPlayer = user;
-                SceneManager.LoadScene("MainMenuScene");
-                return;
-            }
+            DataBaseInitializer.singleton.CurrentPlayer = existingUser;
+            SceneManager.LoadScene("MainMenuScene");
+            return;
         }
 
         string pattern = @"^[a-zA-Z][a-zA-Z0-9]{2,9}$";

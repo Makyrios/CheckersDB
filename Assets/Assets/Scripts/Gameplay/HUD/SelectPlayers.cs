@@ -47,7 +47,7 @@ public class SelectPlayers : MonoBehaviour
         switch (type)
         {
             case 0:
-                CurrentGameType = GameClasses.GameType.TrainingGame;
+                CurrentGameType = GameClasses.GameType.StandartGame;
                 if (ratingObject == null)
                 {
                     ratingObject = Instantiate(Rating, FindObjectOfType<SelectPlayers>().gameObject.transform);

@@ -13,6 +13,11 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("AddPlayerScene");
     }
 
+    public void HandleOnLeaderboardButtonEvent()
+    {
+        SceneManager.LoadScene("LeaderboardScene");
+    }
+
     public void HandleOnPlayerStatsButtonEvent()
     {
         SceneManager.LoadScene("PlayerStatsScene");

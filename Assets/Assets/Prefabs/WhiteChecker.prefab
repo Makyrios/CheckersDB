@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 555082845701318668}
   - component: {fileID: 3901553115886671773}
-  - component: {fileID: 6300672011561871655}
   - component: {fileID: 9188667714658816571}
+  - component: {fileID: -2358285763817195010}
   m_Layer: 0
   m_Name: WhiteChecker
   m_TagString: Checker
@@ -91,22 +91,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &6300672011561871655
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4488988257509111287}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.4
 --- !u!114 &9188667714658816571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +107,30 @@ MonoBehaviour:
   y: 0
   color: 0
   isKing: 0
+  possibleSquares: []
+--- !u!61 &-2358285763817195010
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4488988257509111287}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.0101771355, y: 0.008856595}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.8, y: 0.8}
+    newSize: {x: 0.8, y: 0.8}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.9917431, y: 0.99058414}
+  m_EdgeRadius: 0

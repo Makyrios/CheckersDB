@@ -72,3 +72,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /Games.txt
 *.meta
+/Users.txt
+/ProjectSettings/TimelineSettings.asset
+/ProjectSettings/EditorBuildSettings.asset
+/Data.json
+/Assets/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset

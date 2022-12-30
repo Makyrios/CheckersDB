@@ -14,7 +14,7 @@ namespace GameClasses
 
     public class BaseGameAccount
     {
-        public static int IDSeed;
+        public static int IDSeed = DataBaseInitializer.singleton.userService.GetUserIDSeed();
         protected GameAccount type;
         public int id;
         public string Username;
@@ -26,7 +26,7 @@ namespace GameClasses
 
         public List<Game> allGames;
 
-        private GameFactory gf = new GameFactory();
+        private GameCreator gc;
 
         public virtual int CurrentRating
         {
@@ -77,6 +77,21 @@ namespace GameClasses
             this.id = id;
         }
 
+        private GameCreator GetFactoryCreator(GameType type)
+        {
+            if (type == GameType.StandartGame)
+            {
+                return new StandardGameCreator();
+            }
+            else if (type == GameType.TrainingGame)
+            {
+                return new TrainingGameCreator();
+            }
+            else
+            {
+                return new AllInRatingGameCreator();
+            }
+        }
 
         protected int ChangeRating(Game game, int rating)
         {
@@ -97,7 +112,8 @@ namespace GameClasses
             {
                 throw new ArgumentException("You cannot play with yourself");
             }
-            Game game = gf.CreateGame(type, this, opponent, rating);
+            gc = GetFactoryCreator(type);
+            Game game = gc.FactoryMethod(this, opponent, rating);
             DataBaseInitializer.singleton.userService.CreateGame(game);
             allGames.Add(game);
             opponent.allGames.Add(game);
