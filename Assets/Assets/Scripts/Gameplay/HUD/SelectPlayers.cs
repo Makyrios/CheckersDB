@@ -114,16 +114,7 @@ public class SelectPlayers : MonoBehaviour
             BlackCheckersPlayer = DataBaseInitializer.singleton.CurrentPlayer;
         }
 
-        PlayerPrefs.SetInt("BOT", 0);
         SceneManager.LoadScene("GameScene");
-    }
-
-    public void HandleOnBotButtonClick()
-    {
-        WhiteCheckersPlayer = DataBaseInitializer.singleton.CurrentPlayer;
-        PlayerPrefs.SetInt("BOT", 1);
-        SceneManager.LoadScene("GameScene");
-
     }
 
     public void HandleOnReturnButtonEvent()
