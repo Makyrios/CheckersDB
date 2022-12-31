@@ -79,13 +79,27 @@ namespace DB
             {
                 return;
             }
+            //using (StreamReader readtext = File.OpenText(DataPath))
+            //{
+            //    var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented };
+            //    if (readtext.Peek() != -1)
+            //    {
+            //        DBContext_ = JsonConvert.DeserializeObject<DBContext>(readtext.ReadLine(), settings);
+            //    }
+            //}
             using (StreamReader readtext = File.OpenText(DataPath))
             {
-                var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                string serializedObject = null;
                 if (readtext.Peek() != -1)
                 {
-                    DBContext_ = JsonConvert.DeserializeObject<DBContext>(readtext.ReadLine(), settings);
+                    serializedObject = readtext.ReadToEnd();
                 }
+                else
+                {
+                    return;
+                }
+                var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented };
+                DBContext_ = JsonConvert.DeserializeObject<DBContext>(serializedObject, settings);
             }
             BaseGameAccount.IDSeed = DataBaseInitializer.singleton.userService.GetUserIDSeed();
             Game.gameIDSEED = DataBaseInitializer.singleton.userService.GetGameIDSeed();
@@ -94,7 +108,7 @@ namespace DB
 
         public void WriteToFile()
         {
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented };
             var serializedObject = JsonConvert.SerializeObject(DBContext_, settings);
             using (StreamWriter write = new StreamWriter(DataPath, false))
             {
