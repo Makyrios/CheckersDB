@@ -66,13 +66,17 @@ public class PaintBoard : MonoBehaviour
                 // Choose which square to spawn
                 GameObject currentSquare;
                 if (isWhiteSquare)
+                {
                     currentSquare = Instantiate(prefabWhiteSquare, spawnPosition, Quaternion.identity);
+                }
                 else
+                {
                     currentSquare = Instantiate(prefabBlackSquare, spawnPosition, Quaternion.identity);
+                    currentBoard.squares.Add(currentSquare.GetComponent<Square>());
+                }
                 currentSquare.transform.SetParent(gameBoard.transform, true);
                 currentSquare.GetComponent<Square>().x = x;
                 currentSquare.GetComponent<Square>().y = y;
-                currentBoard.squares.Add(currentSquare.GetComponent<Square>());
 
                 // Spawn checkers
                 if (!isWhiteSquare)
