@@ -11,10 +11,7 @@ public class Checker : MonoBehaviour
     public bool isKing = false;
 
     public List<Square> possibleSquares = new List<Square>();
-    public Square SquareUnderChecker
-    {
-        get;
-        set;
-    }
+
+    public Square SquareUnderChecker;
 
 }
