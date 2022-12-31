@@ -6,9 +6,7 @@ public class Board
     public List<Checker> whiteCheckers;
     public List<Checker> blackCheckers;
     public List<Square> squares;
-    public static bool isWhiteTurn = MoveCheckers.isWhiteTurn;
     public List<Checker> possibleCheckers;
-    public bool isStreak;
 
     public Board()
     {
@@ -17,7 +15,6 @@ public class Board
         blackCheckers = new List<Checker>();
         squares = new List<Square>();
         possibleCheckers = new List<Checker>();
-        isStreak = false;
     }
 
 

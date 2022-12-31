@@ -19,6 +19,7 @@ public class MoveCheckers : MonoBehaviour
     private Square selectedSquare;
 
     public static bool isWhiteTurn;
+    private static bool isStreak;
     private bool isFirstFrame;
 
     private CurrentTurn turnText;
@@ -128,14 +129,14 @@ public class MoveCheckers : MonoBehaviour
         if (checkerToRemove != null)
         {
             checker.possibleSquares.Clear();
-            board.isStreak = true;
+            isStreak = true;
             AddPossibleMoves(board, checker);
-            board.isStreak = false;
+            isStreak = false;
             if (HasBeatingMove(board, checker))
             {
-                board.isStreak = true;
+                isStreak = true;
             }
-            if (board.isStreak)
+            if (isStreak)
             {
                 EndMove();
             }
@@ -374,7 +375,7 @@ public class MoveCheckers : MonoBehaviour
                     }
 
                     // If on streak then we can move forward destroying enemy checkers
-                    if (board.isStreak)
+                    if (isStreak)
                     {
                         MoveDestroyingUpperLeft(board, checker);
                         MoveDestroyingUpperRight(board, checker);
@@ -412,7 +413,7 @@ public class MoveCheckers : MonoBehaviour
                     }
 
                     // If on streak then we can move forward destroying enemy checker
-                    if (board.isStreak)
+                    if (isStreak)
                     {
                         MoveDestroyingLowerLeft(board, checker);
                         MoveDestroyingLowerRight(board, checker);
@@ -827,7 +828,7 @@ public class MoveCheckers : MonoBehaviour
 
     private void HandleStreakChecker(Board board, Checker checker)
     {
-        if (!board.isStreak)
+        if (!isStreak)
         {
             return;
         }
@@ -852,7 +853,7 @@ public class MoveCheckers : MonoBehaviour
     public void EndTurn()
     {
         EndTurnButton.SetActive(false);
-        currentBoard.isStreak = false;
+        isStreak = false;
         CheckVictory(currentBoard);
         ReturnCheckersColor();
         selectedChecker = null;
