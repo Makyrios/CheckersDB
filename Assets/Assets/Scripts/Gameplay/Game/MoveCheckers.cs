@@ -14,13 +14,11 @@ public class MoveCheckers : MonoBehaviour
     #region MoveVariables
 
     private RaycastHit2D mouseOverHit;
-    private Vector2 ClickedPosition;
     private Checker selectedChecker;
-    private Square selectedSquare;
 
+    private bool isFirstFrame;
     public static bool isWhiteTurn;
     private static bool isStreak;
-    private bool isFirstFrame;
 
     private CurrentTurn turnText;
 
@@ -32,7 +30,6 @@ public class MoveCheckers : MonoBehaviour
     void Start()
     {
         currentBoard = PaintBoard.currentBoard;
-
         EndTurnButton.SetActive(false);
         isFirstFrame = true;
         isWhiteTurn = true;
@@ -50,7 +47,6 @@ public class MoveCheckers : MonoBehaviour
         }
 
         TrySelectObject();
-        TryMoveChecker(selectedChecker, selectedSquare);
     }
 
     /// <summary>
@@ -79,9 +75,9 @@ public class MoveCheckers : MonoBehaviour
                     HighlightPossibleSquares(selectedChecker);
                 }
             }
-            else if (mouseOverHit.collider.CompareTag("Square"))
+            else if (mouseOverHit.collider.CompareTag("Square") && selectedChecker != null)
             {
-                SelectSquare(mouseOverHit);
+                TryMoveChecker(selectedChecker, mouseOverHit.collider.GetComponent<Square>());
             }
         }
     }
@@ -729,14 +725,6 @@ public class MoveCheckers : MonoBehaviour
         }
     }
 
-    private void SelectSquare(RaycastHit2D hit)
-    {
-        Square square = hit.collider.GetComponent<Square>();
-        if (square != null && square.GetComponent<SpriteRenderer>().color != Color.white && selectedChecker != null)
-        {
-            selectedSquare = square;
-        }
-    }
 
     /// <summary>
     /// Moves checker to selected square
@@ -847,7 +835,6 @@ public class MoveCheckers : MonoBehaviour
         ReturnCheckersColor();
         HandleStreakChecker(currentBoard, selectedChecker);
         selectedChecker = null;
-        selectedSquare = null;
     }
 
     public void EndTurn()
@@ -857,7 +844,6 @@ public class MoveCheckers : MonoBehaviour
         CheckVictory(currentBoard);
         ReturnCheckersColor();
         selectedChecker = null;
-        selectedSquare = null;
         isWhiteTurn = !isWhiteTurn;
         turnText.ChangeTurn();
         HightlightPossibleCheckers(currentBoard);
