@@ -15,7 +15,6 @@ namespace GameClasses
     public class BaseGameAccount
     {
         public static int IDSeed = DataBaseInitializer.singleton.userService.GetUserIDSeed();
-        protected GameAccount type;
         public int id;
         public string Username;
         protected int currentRating;
@@ -64,7 +63,6 @@ namespace GameClasses
         public BaseGameAccount(string userName)
         {
             allGames = new List<Game>();
-            type = GameAccount.Standart;
             Username = userName;
             id = IDSeed++;
         }
@@ -72,7 +70,6 @@ namespace GameClasses
         public BaseGameAccount(int id, string username)
         {
             allGames = new List<Game>();
-            type = GameAccount.Standart;
             Username = username;
             this.id = id;
         }

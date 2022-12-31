@@ -13,8 +13,8 @@ namespace GameClasses
         private const int BonusPoints = 50;
 
         public StreakGameAccount() { }
-        public StreakGameAccount(string username) : base(username) { type = GameAccount.Streak; }
-        public StreakGameAccount(int id, string username) : base(id, username) { type = GameAccount.Streak; }
+        public StreakGameAccount(string username) : base(username) { }
+        public StreakGameAccount(int id, string username) : base(id, username) { }
 
         private bool CheckWinStreak(Game game)
         {

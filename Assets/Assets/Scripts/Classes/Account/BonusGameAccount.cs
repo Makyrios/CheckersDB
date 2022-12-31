@@ -7,8 +7,8 @@ namespace GameClasses
     public class BonusGameAccount : BaseGameAccount
     {
         public BonusGameAccount() { }
-        public BonusGameAccount(string username) : base(username) { type = GameAccount.Bonus; }
-        public BonusGameAccount(int id, string username) : base(id, username) { type = GameAccount.Bonus; }
+        public BonusGameAccount(string username) : base(username) { }
+        public BonusGameAccount(int id, string username) : base(id, username) { }
 
 
         public override int CurrentRating
