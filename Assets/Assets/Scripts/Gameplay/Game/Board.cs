@@ -16,6 +16,4 @@ public class Board
         squares = new List<Square>();
         possibleCheckers = new List<Checker>();
     }
-
-
 }

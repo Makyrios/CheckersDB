@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace GameClasses
+﻿namespace GameClasses
 {
     public enum GameType
     {
@@ -21,8 +19,7 @@ namespace GameClasses
         protected bool isStreak = false;
 
         // Properties
-        [JsonIgnore]
-        public GameType GameType { get { return gameType; } }
+        public GameType GameType { get { return gameType; } set { if (gameType == 0) gameType = value; } }
         public int ID { get { return id; } set { if (id == 0) id = value; } }
         public int Rating { get { return rating; } set { if (rating == 0) rating = value; } }
         public string Player1 { get { return player1; } set { if (player1 == null) player1 = value; } }

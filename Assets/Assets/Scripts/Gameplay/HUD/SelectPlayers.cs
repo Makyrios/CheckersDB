@@ -93,6 +93,12 @@ public class SelectPlayers : MonoBehaviour
             displayMessage = true;
             throw new ArgumentException("You cannot play with yourself");
         }
+        else if (CurrentGameType == GameClasses.GameType.StandartGame && CurrentRating == 0)
+        {
+            message = "Enter rating in Rating field";
+            displayMessage = true;
+            throw new ArgumentException("Enter rating");
+        }
 
         // Random game sides
         int side = UnityEngine.Random.Range(0, 2);

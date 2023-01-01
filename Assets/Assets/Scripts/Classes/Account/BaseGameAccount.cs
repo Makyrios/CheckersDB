@@ -117,13 +117,13 @@ namespace GameClasses
             var report = new StringBuilder();
 
             int rating = 0;
-            report.AppendLine($"{"GameID",10}{"GameType",20}{"Opponent",20}{"Rating",15}{"Result",10}");
+            report.AppendLine($"{"GameID",-8}\t{"GameType",-17}\t{"Opponent",-11}\t{"Rating",-10}\t{"Result",-8}");
             foreach (var item in allGames)
             {
                 rating = ChangeRating(item, rating);
                 var opponent = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? item.Player2 : item.Player1;
                 string getResult = DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this ? "Won" : "Lose";
-                report.AppendLine($"{item.ID,10}{item.GameType,20}{opponent,20}{item.Rating,15}{getResult,10}");
+                report.AppendLine($"{item.ID,-8}\t{item.GameType,-17}\t{opponent,-11}\t{item.Rating,-10}\t{getResult,-8}");
             }
             return report.ToString();
         }

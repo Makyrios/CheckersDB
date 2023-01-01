@@ -93,14 +93,14 @@ namespace GameClasses
             var report = new StringBuilder();
 
             int rating = 0;
-            report.AppendLine($"{"GameID",11}{"GameType",20}{"Opponent",15}{"Rating",14}{"Result",15}");
+            report.AppendLine($"{"GameID",-8}\t{"GameType",-17}\t{"Opponent",-11}\t{"Rating",-8}\t{"Result",-8}");
             foreach (var item in allGames)
             {
                 rating = ChangeRating(item, rating);
                 string opponent = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? item.Player2 : item.Player1;
                 string getResult = (DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? "Won" : "Lose";
                 string bonusPointLine = (item.IsStreak && DataBaseInitializer.singleton.userService.GetPlayerByUsername(item.Player1) == this) ? "+" + BonusPoints.ToString() : "";
-                report.AppendLine($"{item.ID,11}{item.GameType,20}{opponent,15}{item.Rating + bonusPointLine,14}{getResult,15}");
+                report.AppendLine($"{item.ID,-8}\t{item.GameType,-17}\t{opponent,-11}\t{item.Rating + bonusPointLine,-8}\t{getResult,-8}");
             }
             return report.ToString();
         }

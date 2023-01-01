@@ -13,24 +13,26 @@ public class GameHUD : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI blackPlayerText;
 
-
     GameOver gameOver;
+    private bool isDebug;
 
-    public bool isDebug;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        isDebug = true;
         whitePlayerText.text = SelectPlayers.WhiteCheckersPlayer.Username;
         blackPlayerText.text = SelectPlayers.BlackCheckersPlayer.Username;
 
-        WhiteWinButton.SetActive(false);
-        BlackWinButton.SetActive(false);
         gameOver = FindObjectOfType<GameOver>();
-        CreateButtons();
+        CreateDebugButtons();
     }
 
-    private void CreateButtons()
+    private void CreateDebugButtons()
     {
+        WhiteWinButton.SetActive(false);
+        BlackWinButton.SetActive(false);
         if (isDebug)
         {
             WhiteWinButton.SetActive(true);
