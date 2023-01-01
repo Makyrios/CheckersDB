@@ -12,7 +12,6 @@ public class SelectPlayers : MonoBehaviour
     private TMP_InputField Opponent;
     [SerializeField]
     private TMP_Dropdown GameType;
-    private TMP_InputField ratingObject;
 
 
     private string opponent;
@@ -28,10 +27,10 @@ public class SelectPlayers : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ratingObject = Instantiate(Rating, FindObjectOfType<SelectPlayers>().gameObject.transform);
+        Rating.onValueChanged.AddListener(SetRating);
+        Rating.gameObject.SetActive(true);
         Opponent.onValueChanged.AddListener(SetOpponent);
         GameType.onValueChanged.AddListener(SetGameType);
-        ratingObject.onValueChanged.AddListener(SetRating);
         timer = gameObject.AddComponent<Timer>();
         timer.Duration = 1;
         displayMessage = false;
@@ -48,22 +47,16 @@ public class SelectPlayers : MonoBehaviour
         {
             case 0:
                 CurrentGameType = GameClasses.GameType.StandartGame;
-                if (ratingObject == null)
-                {
-                    ratingObject = Instantiate(Rating, FindObjectOfType<SelectPlayers>().gameObject.transform);
-                    ratingObject.onValueChanged.AddListener(SetRating);
-                }
+                Rating.gameObject.SetActive(true);
                 break;
 
             case 1:
                 CurrentGameType = GameClasses.GameType.TrainingGame;
-                if (ratingObject != null)
-                    Destroy(ratingObject.gameObject);
+                Rating.gameObject.SetActive(false);
                 break;
             case 2:
                 CurrentGameType = GameClasses.GameType.AllInRatingGame;
-                if (ratingObject != null)
-                    Destroy(ratingObject.gameObject);
+                Rating.gameObject.SetActive(false);
                 break;
 
         }
