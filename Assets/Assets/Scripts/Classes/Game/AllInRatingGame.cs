@@ -12,11 +12,5 @@ namespace GameClasses
             rating = Mathf.Min(p1.CurrentRating, p2.CurrentRating);
             gameType = GameType.AllInRatingGame;
         }
-
-        public AllInRatingGame(int id, BaseGameAccount p1, BaseGameAccount p2) : base(id, p1, p2)
-        {
-            rating = Mathf.Min(p1.CurrentRating, p2.CurrentRating);
-            gameType = GameType.AllInRatingGame;
-        }
     }
 }

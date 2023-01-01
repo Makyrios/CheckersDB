@@ -41,52 +41,6 @@ namespace GameClasses
             id = gameIDSEED++;
         }
 
-        public Game(int id, BaseGameAccount p1, BaseGameAccount p2)
-        {
-            player1 = p1.Username;
-            player2 = p2.Username;
-            this.id = id;
-        }
     }
 
-
-    // Factory class
-    //public class GameFactory
-    //{
-    //    public Game CreateGame(int id, GameType type, BaseGameAccount p1, BaseGameAccount p2, int rating = 0)
-    //    {
-    //        switch (type)
-    //        {
-    //            case GameType.StandartGame:
-    //                return new StandardGame(id, rating, p1, p2);
-
-    //            case GameType.TrainingGame:
-    //                return new TrainingGame(id, p1, p2);
-
-    //            case GameType.AllInRatingGame:
-    //                return new AllInRatingGame(id, p1, p2);
-
-    //            default:
-    //                return new TrainingGame(id, p1, p2);
-    //        }
-    //    }
-
-    //    public Game CreateGame(GameType type, BaseGameAccount p1, BaseGameAccount p2, int rating = 0)
-    //    {
-    //        switch (type)
-    //        {
-    //            case GameType.StandartGame:
-    //                return new StandardGame(rating, p1, p2);
-
-    //            case GameType.TrainingGame:
-    //                return new TrainingGame(p1, p2);
-
-    //            case GameType.AllInRatingGame:
-    //                return new AllInRatingGame(p1, p2);
-
-    //            default:
-    //                return new TrainingGame(p1, p2);
-    //        }
-    //    }
-    //}
 }

@@ -79,14 +79,7 @@ namespace DB
             {
                 return;
             }
-            //using (StreamReader readtext = File.OpenText(DataPath))
-            //{
-            //    var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, Formatting = Formatting.Indented };
-            //    if (readtext.Peek() != -1)
-            //    {
-            //        DBContext_ = JsonConvert.DeserializeObject<DBContext>(readtext.ReadLine(), settings);
-            //    }
-            //}
+
             using (StreamReader readtext = File.OpenText(DataPath))
             {
                 string serializedObject = null;

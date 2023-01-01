@@ -11,10 +11,5 @@ namespace GameClasses
             gameType = GameType.TrainingGame;
         }
 
-        public TrainingGame(int id, BaseGameAccount p1, BaseGameAccount p2) : base(id, p1, p2)
-        {
-            rating = 0;
-            gameType = GameType.TrainingGame;
-        }
     }
 }

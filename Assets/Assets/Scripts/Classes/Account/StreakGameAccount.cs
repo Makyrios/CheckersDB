@@ -26,6 +26,12 @@ namespace GameClasses
                 for (int i = allGames.FindIndex(g => g == game); i >= 0; i--)
                 {
                     var currentGame = allGames[i];
+                    // If game is currentGame is already checked isStreak, then no need to check further
+                    if (currentGame.IsStreak)
+                    {
+                        isStreak = true;
+                        break;
+                    }
                     // Check if current game is not training game
                     if (currentGame.GameType == GameType.TrainingGame)
                         continue;

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,13 +14,13 @@ namespace GameClasses
     public class BaseGameAccount
     {
         public static int IDSeed = DataBaseInitializer.singleton.userService.GetUserIDSeed();
-        public int id;
+
+        protected int id;
         public string Username;
         protected int currentRating;
         protected int gamesCount;
 
-        [JsonIgnore]
-        public int ID { get { return id; } }
+        public int ID { get { return id; } set { if (id == 0) id = value; } }
 
         public List<Game> allGames;
 
@@ -47,12 +46,7 @@ namespace GameClasses
         {
             get
             {
-                int count = 0;
-                foreach (var item in allGames)
-                {
-                    count++;
-                }
-
+                int count = allGames.Count;
                 gamesCount = count;
                 return count;
             }
