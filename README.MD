@@ -37,4 +37,4 @@ More game and account types.
 ![3](https://user-images.githubusercontent.com/43245644/226625088-48aed30f-6a20-403a-b0d0-b6f2882498f6.png)
 ![4](https://user-images.githubusercontent.com/43245644/226625104-ab02aeeb-a9b3-46f2-945a-7e00ad672071.png)
 ![5](https://user-images.githubusercontent.com/43245644/226625126-8f187f88-c4c0-4835-89e1-a74f61eeb7b7.png)
-![6](https://user-images.githubusercontent.com/43245644/226625137-74f257a7-fd61-466c-b4c0-14bdad4967e5.png)
+![6](https://user-images.githubusercontent.com/43245644/226625553-71da2a58-675b-4263-aa9d-0837c311721b.png)
