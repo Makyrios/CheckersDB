@@ -23,14 +23,6 @@ Base Game Account - default account without any bonuses.\
 BonusGameAccount - wins give more rating and loses take half of lost rating.\
 StreakGameAccount - user gets bonus points if they win several games in a row.
 
-## Future implementations
-
-Features to implement:
-
-Play against bots, controlled by AI.\
-Multiplayer support.\
-More game and account types.
-
 ## Screenshots
 ![1](https://user-images.githubusercontent.com/43245644/226625034-fa6d862f-b5d8-48ff-ac5c-b607defcb4a5.png)
 ![2](https://user-images.githubusercontent.com/43245644/226625062-5941e4f5-a3ce-49bc-828e-b3d2ccf9283e.png)
